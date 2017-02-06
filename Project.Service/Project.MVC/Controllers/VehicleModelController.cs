@@ -9,6 +9,8 @@ using System.Web.Mvc;
 using Project.Service.DAL;
 using Project.Service.Models;
 using Project.Service.ViewModels;
+using PagedList;
+using PagedList.Mvc;
 
 namespace Project.MVC.Controllers
 {
@@ -17,9 +19,20 @@ namespace Project.MVC.Controllers
         VehicleService vehicleService = new VehicleService();
 
         // GET: VehicleModel
-        public ActionResult Index()
+        public ActionResult Index(string sortOrder, string searchString, string searchBy, int? page)
         {
-            return View(vehicleService.GetAllVehicleModels());
+            ViewBag.NameSortParmMake = string.IsNullOrEmpty(sortOrder) ? "make_desc" : "";
+            ViewBag.NameSortParmModel = sortOrder == "Model" ? "model_desc" : "Model";
+            ViewBag.AbrvSortParmModel = sortOrder == "Abrv" ? "abrv_desc" : "Abrv";
+
+            if (searchString == null)
+            {
+                return View(vehicleService.SortFilterPagingModel(sortOrder, "", "", page));
+            }
+            else
+            {
+                return View(vehicleService.SortFilterPagingModel(sortOrder, searchString, searchBy, page));
+            }
         }
 
         // GET: VehicleModel/Details/5

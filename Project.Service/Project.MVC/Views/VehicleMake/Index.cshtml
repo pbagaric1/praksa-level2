@@ -1,4 +1,7 @@
-﻿@model IEnumerable<Project.Service.ViewModels.VehicleMakeViewModel>
+﻿@using PagedList;
+@using PagedList.Mvc;
+
+@model IPagedList<Project.Service.ViewModels.VehicleMakeViewModel>
 
 @{
     ViewBag.Title = "Index";
@@ -9,13 +12,21 @@
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
+<p>
+    @using(Html.BeginForm("Index", "VehicleMake", FormMethod.Get))
+    {
+        <b>Search by:</b> @Html.RadioButton("searchBy", "Name", true) <text>Name</text>
+        @Html.RadioButton("searchBy", "Abrv") <text>Abrv</text>
+        @Html.TextBox("searchString") <input type="submit" value="Search" />
+    }
+</p>
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Name)
+            @Html.ActionLink("Name", "Index", new { sortOrder = ViewBag.NameSortParm, searchString = Request.QueryString["searchString"], searchBy = Request.QueryString["searchBy"] })
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Abrv)
+            @Html.ActionLink("Abrv", "Index", new { sortOrder = ViewBag.AbrvSortParm, searchString = Request.QueryString["searchString"], searchBy = Request.QueryString["searchBy"] })
         </th>
         <th></th>
     </tr>
@@ -37,3 +48,5 @@
 }
 
 </table>
+@Html.PagedListPager(Model, page => Url.Action("Index", new { page, searchBy = Request.QueryString["searchBy"], searchString = Request.QueryString["searchString"], sortOrder = Request["sortOrder"] }),
+new PagedListRenderOptions() { Display = PagedListDisplayMode.IfNeeded, DisplayPageCountAndCurrentLocation = true, DisplayItemSliceAndTotal = true})

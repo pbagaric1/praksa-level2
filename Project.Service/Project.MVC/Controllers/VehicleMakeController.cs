@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
@@ -11,17 +9,29 @@ using System.Web.Mvc;
 using Project.Service.DAL;
 using Project.Service.Models;
 using Project.Service.ViewModels;
-
+using PagedList;
+using PagedList.Mvc;
 
 namespace Project.MVC.Controllers
 {
     public class VehicleMakeController : Controller
     {
-        VehicleService vehicleService = new VehicleService();
+        private VehicleService vehicleService = new VehicleService();
 
-        public ActionResult Index()
+
+        public ActionResult Index(string sortOrder, string searchString, string searchBy, int? page)
         {
-            return View(vehicleService.GetAllVehicleMakes());
+            ViewBag.NameSortParm = string.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewBag.AbrvSortParm = sortOrder == "Abrv" ? "abrv_desc" : "Abrv";
+
+            if (searchString == null)
+            {
+                return View(vehicleService.SortFilterPagingMake(sortOrder, "", "", page));
+            }
+            else
+            {
+                return View(vehicleService.SortFilterPagingMake(sortOrder, searchString, searchBy, page));
+            }
         }
         //// GET: VehicleMake/Details/5
         public ActionResult Details(Guid? id)
@@ -106,5 +116,6 @@ namespace Project.MVC.Controllers
             vehicleService.DeleteVehicleMake(id);
             return RedirectToAction("Index");
         }
-    }
+    
+}
 }
