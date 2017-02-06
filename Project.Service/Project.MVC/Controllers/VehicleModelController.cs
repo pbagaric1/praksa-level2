@@ -16,7 +16,12 @@ namespace Project.MVC.Controllers
 {
     public class VehicleModelController : Controller
     {
-        VehicleService vehicleService = new VehicleService();
+        private VehicleService vehicleService;
+
+        public VehicleModelController()
+        {
+            vehicleService = VehicleService.Instance();
+        }
 
         // GET: VehicleModel
         public ActionResult Index(string sortOrder, string searchString, string searchBy, int? page)
